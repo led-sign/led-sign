@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>나만의 LED 전광판 만들기</title>
+    <!-- Tailwind CSS를 불러옵니다. -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts를 불러옵니다. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* CSS 변수를 사용하여 애니메이션 속도를 독립적으로 제어합니다. */
+        :root {
+            --scroll-duration: 10s;
+            --blink-duration: 1s;
+        }
+        @keyframes marquee {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        
+        /* 3번 문제 수정: 애니메이션을 독립적으로 적용합니다. */
+        .scrolling-text {
+            /* 기본적으로 스크롤 애니메이션만 적용 */
+            animation: marquee var(--scroll-duration) linear infinite;
+        }
+        .scrolling-text.blinking-text {
+            /* blinking-text 클래스가 추가되면, 스크롤과 깜빡임 애니메이션을 모두 적용 */
+            animation: 
+                marquee var(--scroll-duration) linear infinite,
+                blink var(--blink-duration) ease-in-out infinite;
+        }
+
+        /* 2번 문제 수정: 전체 화면 모드에서 수직 중앙 정렬을 보장합니다. */
+        #preview-wrapper:fullscreen #preview {
+            height: 100%;
+        }
+
+        /* 언어 변경 확인 모달 스타일 */
+        #language-modal {
+            transition: opacity 0.3s ease;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen flex flex-col items-center justify-center p-4">
+
+    <!-- === 언어 변경 확인 모달 === -->
+    <div id="language-modal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 hidden opacity-0">
+        <div class="bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-sm text-center">
+            <p id="language-modal-text" class="mb-4">Switch to English?</p>
+            <div class="flex justify-center space-x-4">
+                <button id="lang-confirm-yes" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition">Yes</button>
+                <button id="lang-confirm-no" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-6 rounded-lg transition">No</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="w-full max-w-4xl mx-auto">
+        <!-- === 미리보기 영역 === -->
+        <div id="preview-wrapper" class="bg-black border-4 border-gray-700 rounded-lg overflow-hidden mb-8 shadow-lg">
+            <div id="preview" class="h-48 flex items-center whitespace-nowrap">
+                <p id="scrolling-text-element" class="text-6xl font-bold scrolling-text" style="color: rgb(255, 221, 0);">여기에 텍스트를 입력하세요</p>
+            </div>
+        </div>
+
+        <!-- === 컨트롤 패널 === -->
+        <div id="control-panel" class="bg-gray-800 p-6 rounded-lg shadow-2xl">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                
+                <div class="lg:col-span-3">
+                    <label for="text-input" class="block text-sm font-medium text-gray-300 mb-2" data-translate-key="textLabel">표시할 텍스트</label>
+                    <input type="text" id="text-input" value="여기에 텍스트를 입력하세요" class="w-full bg-gray-700 border-gray-600 rounded-md px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2" data-translate-key="textColorLabel">글자 색상</label>
+                    <div class="flex items-center space-x-2" id="preset-colors">
+                        <button data-color="rgb(239, 68, 68)" class="w-8 h-8 rounded-full bg-red-500 border-2 border-transparent hover:border-white transition"></button>
+                        <button data-color="rgb(250, 204, 21)" class="w-8 h-8 rounded-full bg-yellow-400 border-2 border-transparent hover:border-white transition"></button>
+                        <button data-color="rgb(34, 197, 94)" class="w-8 h-8 rounded-full bg-green-500 border-2 border-transparent hover:border-white transition"></button>
+                        <button data-color="rgb(59, 130, 246)" class="w-8 h-8 rounded-full bg-blue-500 border-2 border-transparent hover:border-white transition"></button>
+                        <input type="color" id="text-color-picker" value="#ffdd00" class="w-8 h-8 bg-gray-700 rounded-full cursor-pointer border-2 border-gray-600">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2" data-translate-key="bgColorLabel">배경 색상</label>
+                    <div class="flex items-center space-x-2">
+                        <button data-bg-color="#000000" class="w-8 h-8 rounded-full bg-black border-2 border-gray-500 hover:border-white transition"></button>
+                        <button data-bg-color="#FFFFFF" class="w-8 h-8 rounded-full bg-white border-2 border-gray-500 hover:border-black transition"></button>
+                        <input type="color" id="bg-color-picker" value="#000000" class="w-8 h-8 bg-gray-700 rounded-full cursor-pointer border-2 border-gray-600">
+                    </div>
+                </div>
+
+                <!-- 4번 문제 수정: 라벨 구조를 변경하여 번역 오류를 해결합니다. -->
+                <div class="lg:col-span-1">
+                    <label for="font-size-slider" class="block text-sm font-medium text-gray-300 mb-2">
+                        <span data-translate-key="fontSizeLabel">글자 크기:</span> <span id="font-size-value">60</span>px
+                    </label>
+                    <input type="range" id="font-size-slider" min="10" max="200" value="60" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
+                </div>
+
+                <div class="lg:col-span-1">
+                    <label for="scroll-speed-slider" class="block text-sm font-medium text-gray-300 mb-2">
+                        <span data-translate-key="scrollSpeedLabel">스크롤 속도:</span> <span id="scroll-speed-value">10</span>s
+                    </label>
+                    <input type="range" id="scroll-speed-slider" min="1" max="30" value="10" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
+                </div>
+
+                <div class="lg:col-span-1">
+                    <label for="blink-speed-slider" class="block text-sm font-medium text-gray-300 mb-2">
+                        <span data-translate-key="blinkSpeedLabel">깜빡임 속도:</span> <span id="blink-speed-value">0.0</span><span data-translate-key="blinkSuffix">s (0=없음)</span>
+                    </label>
+                    <input type="range" id="blink-speed-slider" min="0" max="5" step="0.1" value="0" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
+                </div>
+            </div>
+
+            <div class="mt-8 flex flex-col md:flex-row items-center justify-center md:justify-between">
+                <div class="flex items-center space-x-2 mb-4 md:mb-0">
+                    <span class="text-sm font-medium">KO</span>
+                    <label for="language-toggle" class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" value="" id="language-toggle" class="sr-only peer">
+                        <div class="w-11 h-6 bg-gray-600 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                    </label>
+                    <span class="text-sm font-medium">EN</span>
+                </div>
+                
+                <button id="play-button" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg text-lg transition-transform transform hover:scale-105 shadow-lg flex items-center space-x-2">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span data-translate-key="playButton">전체 화면으로 재생</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const textInput = document.getElementById('text-input');
+            const textColorPicker = document.getElementById('text-color-picker');
+            const bgColorPicker = document.getElementById('bg-color-picker');
+            const fontSizeSlider = document.getElementById('font-size-slider');
+            const scrollSpeedSlider = document.getElementById('scroll-speed-slider');
+            const blinkSpeedSlider = document.getElementById('blink-speed-slider');
+            const fontSizeValue = document.getElementById('font-size-value');
+            const scrollSpeedValue = document.getElementById('scroll-speed-value');
+            const blinkSpeedValue = document.getElementById('blink-speed-value');
+            const scrollingTextElement = document.getElementById('scrolling-text-element');
+            const previewWrapper = document.getElementById('preview-wrapper');
+            const presetColorButtons = document.querySelectorAll('#preset-colors button');
+            const presetBgColorButtons = document.querySelectorAll('[data-bg-color]');
+            const playButton = document.getElementById('play-button');
+            const languageToggle = document.getElementById('language-toggle');
+            const languageModal = document.getElementById('language-modal');
+            const langConfirmYes = document.getElementById('lang-confirm-yes');
+            const langConfirmNo = document.getElementById('lang-confirm-no');
+            const root = document.documentElement;
+
+            // --- 번역 데이터 및 기능 ---
+            const translations = {
+                ko: {
+                    textLabel: '표시할 텍스트',
+                    textColorLabel: '글자 색상',
+                    bgColorLabel: '배경 색상',
+                    fontSizeLabel: '글자 크기:',
+                    scrollSpeedLabel: '스크롤 속도:',
+                    blinkSpeedLabel: '깜빡임 속도:',
+                    playButton: '전체 화면으로 재생',
+                    blinkSuffix: 's (0=없음)',
+                    placeholder: '여기에 텍스트를 입력하세요'
+                },
+                en: {
+                    textLabel: 'Display Text',
+                    textColorLabel: 'Text Color',
+                    bgColorLabel: 'Background Color',
+                    fontSizeLabel: 'Font Size:',
+                    scrollSpeedLabel: 'Scroll Speed:',
+                    blinkSpeedLabel: 'Blink Speed:',
+                    playButton: 'Play Fullscreen',
+                    blinkSuffix: 's (0=off)',
+                    placeholder: 'Enter your text here'
+                }
+            };
+            let currentLang = 'ko';
+
+            function translateUI(lang) {
+                currentLang = lang;
+                document.querySelectorAll('[data-translate-key]').forEach(el => {
+                    const key = el.dataset.translateKey;
+                    if (translations[lang][key]) {
+                        el.innerText = translations[lang][key];
+                    }
+                });
+
+                // 1번 문제 수정: 사용자가 기본 텍스트를 수정하지 않았을 경우에만 placeholder 번역 적용
+                const defaultKo = translations.ko.placeholder;
+                const defaultEn = translations.en.placeholder;
+                if (textInput.value === defaultKo || textInput.value === defaultEn) {
+                    textInput.value = translations[lang].placeholder;
+                    scrollingTextElement.innerText = translations[lang].placeholder;
+                }
+            }
+
+            // --- 이벤트 리스너 설정 ---
+            textInput.addEventListener('input', e => scrollingTextElement.innerText = e.target.value);
+            textColorPicker.addEventListener('input', e => scrollingTextElement.style.color = e.target.value);
+            bgColorPicker.addEventListener('input', e => previewWrapper.style.backgroundColor = e.target.value);
+            
+            presetColorButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const color = button.dataset.color;
+                    scrollingTextElement.style.color = color;
+                    textColorPicker.value = rgbToHex(color);
+                });
+            });
+
+            presetBgColorButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const color = button.dataset.bgColor;
+                    previewWrapper.style.backgroundColor = color;
+                    bgColorPicker.value = color;
+                });
+            });
+
+            fontSizeSlider.addEventListener('input', e => {
+                const size = e.target.value;
+                scrollingTextElement.style.fontSize = `${size}px`;
+                fontSizeValue.innerText = size;
+            });
+
+            scrollSpeedSlider.addEventListener('input', e => {
+                const speed = e.target.value;
+                root.style.setProperty('--scroll-duration', `${speed}s`);
+                scrollSpeedValue.innerText = speed;
+            });
+
+            blinkSpeedSlider.addEventListener('input', e => {
+                const speed = e.target.value;
+                if (speed > 0) {
+                    scrollingTextElement.classList.add('blinking-text');
+                    root.style.setProperty('--blink-duration', `${speed}s`);
+                } else {
+                    scrollingTextElement.classList.remove('blinking-text');
+                }
+                blinkSpeedValue.innerText = parseFloat(speed).toFixed(1);
+            });
+
+            playButton.addEventListener('click', () => {
+                if (previewWrapper.requestFullscreen) {
+                    previewWrapper.requestFullscreen();
+                } else if (previewWrapper.webkitRequestFullscreen) {
+                    previewWrapper.webkitRequestFullscreen();
+                } else if (previewWrapper.msRequestFullscreen) {
+                    previewWrapper.msRequestFullscreen();
+                }
+            });
+
+            languageToggle.addEventListener('change', (e) => {
+                translateUI(e.target.checked ? 'en' : 'ko');
+            });
+
+            // --- 언어 자동 감지 및 모달 로직 ---
+            const userLang = navigator.language || navigator.userLanguage;
+            if (!userLang.startsWith('ko')) {
+                document.getElementById('language-modal-text').innerText = 'Switch to English?';
+                languageModal.classList.remove('hidden');
+                setTimeout(() => languageModal.classList.remove('opacity-0'), 10);
+            }
+
+            function closeModal() {
+                languageModal.classList.add('opacity-0');
+                setTimeout(() => languageModal.classList.add('hidden'), 300);
+            }
+
+            langConfirmYes.addEventListener('click', () => {
+                translateUI('en');
+                languageToggle.checked = true;
+                closeModal();
+            });
+            langConfirmNo.addEventListener('click', closeModal);
+
+            function rgbToHex(rgb) {
+                let sep = rgb.includes(",") ? "," : " ";
+                rgb = rgb.substr(4).split(")")[0].split(sep);
+                let r = (+rgb[0]).toString(16).padStart(2, '0');
+                let g = (+rgb[1]).toString(16).padStart(2, '0');
+                let b = (+rgb[2]).toString(16).padStart(2, '0');
+                return "#" + r + g + b;
+            }
+        });
+    </script>
+</body>
+</html>
