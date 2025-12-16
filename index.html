@@ -1,6 +1,20 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO 및 메타 태그 (마일스톤 5 적용) -->
+    <title>온라인 LED 전광판 만들기 | Web Scroller</title>
+    <meta name="description" content="텍스트, 색상, 속도를 마음대로 조절하는 나만의 온라인 LED 전광판을 만들어보세요. 전체 화면 기능으로 실제 전광판처럼 즐길 수 있습니다.">
+    <meta name="keywords" content="LED 전광판, 온라인 전광판, 웹 전광판, 텍스트 스크롤러, digital signboard, led scroller">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
 
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-9DHM2Q6G3P"></script>
@@ -11,24 +25,12 @@
 
     gtag('config', 'G-9DHM2Q6G3P');
     </script>
-
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>온라인 LED 전광판 | Online LED Web Scroller</title>
-
-    <meta name="description" content="텍스트, 색상, 속도를 마음대로 조절하는 나만의 온라인 LED 전광판을 만들어보세요. 전체 화면 기능으로 실제 전광판처럼 즐길 수 있습니다.">
-    <meta name="keywords" content="LED 전광판, 온라인 전광판, 웹 전광판, 텍스트 스크롤러, digital signboard, led scroller">
-    <!-- Tailwind CSS를 불러옵니다. -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts를 불러옵니다. -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    
     <style>
         body {
             font-family: 'Inter', sans-serif;
         }
-        /* CSS 변수를 사용하여 애니메이션 속도를 독립적으로 제어합니다. */
         :root {
             --scroll-duration: 10s;
             --blink-duration: 1s;
@@ -42,24 +44,56 @@
             50% { opacity: 0; }
         }
         
-        /* 3번 문제 수정: 애니메이션을 독립적으로 적용합니다. */
         .scrolling-text {
-            /* 기본적으로 스크롤 애니메이션만 적용 */
+            /* 기본 스크롤 애니메이션 */
             animation: marquee var(--scroll-duration) linear infinite;
         }
+        
+        /* 정지 모드 클래스: 애니메이션을 멈추고 위치를 초기화하지 않음 (JS로 제어) */
+        .scrolling-text.static-mode {
+            animation-name: none !important; /* 스크롤 애니메이션 제거 */
+            transform: none !important;      /* 위치 변환 제거 */
+            width: auto;
+        }
+
         .scrolling-text.blinking-text {
-            /* blinking-text 클래스가 추가되면, 스크롤과 깜빡임 애니메이션을 모두 적용 */
+            /* 스크롤과 깜빡임 동시 적용 (정지 모드가 아닐 때) */
             animation: 
                 marquee var(--scroll-duration) linear infinite,
                 blink var(--blink-duration) ease-in-out infinite;
         }
 
-        /* 2번 문제 수정: 전체 화면 모드에서 수직 중앙 정렬을 보장합니다. */
+        /* 정지 모드이면서 깜빡임이 켜져 있을 때 */
+        .scrolling-text.static-mode.blinking-text {
+            animation: blink var(--blink-duration) ease-in-out infinite;
+        }
+
+        /* 미리보기 컨테이너 설정 */
+        #preview-wrapper {
+            display: flex;
+            align-items: center; /* 세로 중앙 정렬 */
+            overflow: hidden;    /* 넘치는 내용 숨김 */
+        }
+        
+        #preview {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center; /* 세로 중앙 정렬 */
+            /* 스크롤 모드일 땐 justify-content가 start여야 자연스러움 */
+            justify-content: flex-start; 
+        }
+
+        /* 정지 모드일 때는 가로 중앙 정렬 */
+        #preview.static-layout {
+            justify-content: center;
+        }
+
         #preview-wrapper:fullscreen #preview {
             height: 100%;
         }
 
-        /* 언어 변경 확인 모달 스타일 */
+        /* 언어 모달 */
         #language-modal {
             transition: opacity 0.3s ease;
         }
@@ -67,7 +101,7 @@
 </head>
 <body class="bg-gray-900 text-white min-h-screen flex flex-col items-center justify-center p-4">
 
-    <!-- === 언어 변경 확인 모달 === -->
+    <!-- 언어 변경 모달 -->
     <div id="language-modal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 hidden opacity-0">
         <div class="bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-sm text-center">
             <p id="language-modal-text" class="mb-4">Switch to English?</p>
@@ -80,9 +114,10 @@
 
     <div class="w-full max-w-4xl mx-auto">
         <!-- === 미리보기 영역 === -->
-        <div id="preview-wrapper" class="bg-black border-4 border-gray-700 rounded-lg overflow-hidden mb-8 shadow-lg">
-            <div id="preview" class="h-48 flex items-center whitespace-nowrap">
-                <p id="scrolling-text-element" class="text-6xl font-bold scrolling-text" style="color: rgb(255, 221, 0);">여기에 텍스트를 입력하세요</p>
+        <div id="preview-wrapper" class="bg-black border-4 border-gray-700 rounded-lg overflow-hidden mb-8 shadow-lg h-64 relative">
+            <div id="preview">
+                <!-- whitespace-nowrap: 줄바꿈 방지 -->
+                <p id="scrolling-text-element" class="text-6xl font-bold scrolling-text whitespace-nowrap" style="color: rgb(255, 221, 0);">여기에 텍스트를 입력하세요</p>
             </div>
         </div>
 
@@ -115,18 +150,33 @@
                     </div>
                 </div>
 
-                <!-- 4번 문제 수정: 라벨 구조를 변경하여 번역 오류를 해결합니다. -->
+                <!-- 글자 크기 + 자동 맞춤 -->
                 <div class="lg:col-span-1">
-                    <label for="font-size-slider" class="block text-sm font-medium text-gray-300 mb-2">
-                        <span data-translate-key="fontSizeLabel">글자 크기:</span> <span id="font-size-value">60</span>px
-                    </label>
-                    <input type="range" id="font-size-slider" min="10" max="200" value="60" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
+                    <div class="flex justify-between items-center mb-2">
+                        <label for="font-size-slider" class="block text-sm font-medium text-gray-300">
+                            <span data-translate-key="fontSizeLabel">글자 크기:</span> <span id="font-size-value">60</span>px
+                        </label>
+                        <!-- 화면 꽉 채우기 체크박스 -->
+                        <div class="flex items-center">
+                            <input type="checkbox" id="auto-fit-check" class="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-500">
+                            <label for="auto-fit-check" class="ml-2 text-xs text-gray-300 cursor-pointer select-none" data-translate-key="autoFitLabel">화면 꽉 채우기</label>
+                        </div>
+                    </div>
+                    <input type="range" id="font-size-slider" min="10" max="300" value="60" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
                 </div>
 
+                <!-- 스크롤 속도 + 정지 모드 -->
                 <div class="lg:col-span-1">
-                    <label for="scroll-speed-slider" class="block text-sm font-medium text-gray-300 mb-2">
-                        <span data-translate-key="scrollSpeedLabel">스크롤 속도:</span> <span id="scroll-speed-value">10</span>s
-                    </label>
+                    <div class="flex justify-between items-center mb-2">
+                        <label for="scroll-speed-slider" class="block text-sm font-medium text-gray-300">
+                            <span data-translate-key="scrollSpeedLabel">스크롤 속도:</span> <span id="scroll-speed-value">10</span>s
+                        </label>
+                        <!-- 텍스트 고정 체크박스 -->
+                        <div class="flex items-center">
+                            <input type="checkbox" id="static-mode-check" class="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-500">
+                            <label for="static-mode-check" class="ml-2 text-xs text-gray-300 cursor-pointer select-none" data-translate-key="staticModeLabel">텍스트 고정</label>
+                        </div>
+                    </div>
                     <input type="range" id="scroll-speed-slider" min="1" max="30" value="10" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
                 </div>
 
@@ -164,11 +214,16 @@
             const fontSizeSlider = document.getElementById('font-size-slider');
             const scrollSpeedSlider = document.getElementById('scroll-speed-slider');
             const blinkSpeedSlider = document.getElementById('blink-speed-slider');
+            const staticModeCheck = document.getElementById('static-mode-check');
+            const autoFitCheck = document.getElementById('auto-fit-check');
+
             const fontSizeValue = document.getElementById('font-size-value');
             const scrollSpeedValue = document.getElementById('scroll-speed-value');
             const blinkSpeedValue = document.getElementById('blink-speed-value');
             const scrollingTextElement = document.getElementById('scrolling-text-element');
             const previewWrapper = document.getElementById('preview-wrapper');
+            const previewDiv = document.getElementById('preview');
+            
             const presetColorButtons = document.querySelectorAll('#preset-colors button');
             const presetBgColorButtons = document.querySelectorAll('[data-bg-color]');
             const playButton = document.getElementById('play-button');
@@ -178,7 +233,7 @@
             const langConfirmNo = document.getElementById('lang-confirm-no');
             const root = document.documentElement;
 
-            // --- 번역 데이터 및 기능 ---
+            // --- 번역 데이터 ---
             const translations = {
                 ko: {
                     textLabel: '표시할 텍스트',
@@ -189,7 +244,9 @@
                     blinkSpeedLabel: '깜빡임 속도:',
                     playButton: '전체 화면으로 재생',
                     blinkSuffix: 's (0=없음)',
-                    placeholder: '여기에 텍스트를 입력하세요'
+                    placeholder: '여기에 텍스트를 입력하세요',
+                    staticModeLabel: '텍스트 고정',
+                    autoFitLabel: '화면 꽉 채우기'
                 },
                 en: {
                     textLabel: 'Display Text',
@@ -200,62 +257,132 @@
                     blinkSpeedLabel: 'Blink Speed:',
                     playButton: 'Play Fullscreen',
                     blinkSuffix: 's (0=off)',
-                    placeholder: 'Enter your text here'
+                    placeholder: 'Enter your text here',
+                    staticModeLabel: 'Static Text',
+                    autoFitLabel: 'Fit to Screen'
                 }
             };
-            let currentLang = 'ko';
 
-            function translateUI(lang) {
-                currentLang = lang;
-                document.querySelectorAll('[data-translate-key]').forEach(el => {
-                    const key = el.dataset.translateKey;
-                    if (translations[lang][key]) {
-                        el.innerText = translations[lang][key];
+            // --- 자동 크기 조절 함수 (핵심 로직) ---
+            function adjustFontSizeToFit() {
+                if (!autoFitCheck.checked) return; // 체크 안 되어있으면 실행 안 함
+
+                const containerWidth = previewWrapper.clientWidth;
+                const containerHeight = previewWrapper.clientHeight;
+                const text = scrollingTextElement.innerText;
+                const isStatic = staticModeCheck.checked;
+
+                // 측정을 위해 임시로 폰트 크기 설정
+                let minSize = 10;
+                let maxSize = 1000; // 충분히 큰 값
+                let optimalSize = 10;
+
+                // 이진 탐색으로 최적의 크기 찾기 (성능 최적화)
+                // 단순히 1씩 증가시키는 것보다 빠름
+                let low = minSize;
+                let high = maxSize;
+
+                // 텍스트 측정을 위한 임시 요소 생성 (화면에 그리진 않음)
+                const canvas = document.createElement('canvas');
+                const context = canvas.getContext('2d');
+                context.font = `bold 100px 'Inter', sans-serif`; // 폰트 패밀리 맞춤
+
+                while (low <= high) {
+                    let mid = Math.floor((low + high) / 2);
+                    context.font = `bold ${mid}px 'Inter', sans-serif`;
+                    const metrics = context.measureText(text);
+                    const textWidth = metrics.width;
+                    const textHeight = mid; // 대략적인 높이
+
+                    let fits = false;
+                    if (isStatic) {
+                        // 정지 모드: 가로와 세로 모두 화면 안에 들어와야 함 (여유 공간 5%)
+                        fits = (textWidth <= containerWidth * 0.95) && (textHeight <= containerHeight * 0.95);
+                    } else {
+                        // 스크롤 모드: 세로만 화면 안에 들어오면 됨 (가로는 넘쳐도 됨)
+                        fits = (textHeight <= containerHeight * 0.95);
                     }
-                });
 
-                // 1번 문제 수정: 사용자가 기본 텍스트를 수정하지 않았을 경우에만 placeholder 번역 적용
-                const defaultKo = translations.ko.placeholder;
-                const defaultEn = translations.en.placeholder;
-                if (textInput.value === defaultKo || textInput.value === defaultEn) {
-                    textInput.value = translations[lang].placeholder;
-                    scrollingTextElement.innerText = translations[lang].placeholder;
+                    if (fits) {
+                        optimalSize = mid;
+                        low = mid + 1;
+                    } else {
+                        high = mid - 1;
+                    }
                 }
+
+                // 계산된 크기 적용
+                scrollingTextElement.style.fontSize = `${optimalSize}px`;
+                fontSizeSlider.value = Math.min(optimalSize, 300); // 슬라이더 UI 업데이트 (최대값 제한)
+                fontSizeValue.innerText = optimalSize;
             }
 
-            // --- 이벤트 리스너 설정 ---
-            textInput.addEventListener('input', e => scrollingTextElement.innerText = e.target.value);
+            // --- 이벤트 리스너 ---
+
+            // 텍스트 입력 시
+            textInput.addEventListener('input', e => {
+                scrollingTextElement.innerText = e.target.value;
+                if (autoFitCheck.checked) adjustFontSizeToFit();
+            });
+
+            // 색상 변경
             textColorPicker.addEventListener('input', e => scrollingTextElement.style.color = e.target.value);
             bgColorPicker.addEventListener('input', e => previewWrapper.style.backgroundColor = e.target.value);
-            
-            presetColorButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    const color = button.dataset.color;
-                    scrollingTextElement.style.color = color;
-                    textColorPicker.value = rgbToHex(color);
-                });
-            });
+            presetColorButtons.forEach(btn => btn.addEventListener('click', () => {
+                scrollingTextElement.style.color = btn.dataset.color;
+                textColorPicker.value = rgbToHex(btn.dataset.color);
+            }));
+            presetBgColorButtons.forEach(btn => btn.addEventListener('click', () => {
+                previewWrapper.style.backgroundColor = btn.dataset.bgColor;
+                bgColorPicker.value = btn.dataset.bgColor;
+            }));
 
-            presetBgColorButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    const color = button.dataset.bgColor;
-                    previewWrapper.style.backgroundColor = color;
-                    bgColorPicker.value = color;
-                });
-            });
-
+            // 글자 크기 슬라이더 (자동 맞춤이 꺼져있을 때만 작동)
             fontSizeSlider.addEventListener('input', e => {
+                if (autoFitCheck.checked) return; // 자동 맞춤 중에는 슬라이더 무시
                 const size = e.target.value;
                 scrollingTextElement.style.fontSize = `${size}px`;
                 fontSizeValue.innerText = size;
             });
 
-            scrollSpeedSlider.addEventListener('input', e => {
-                const speed = e.target.value;
-                root.style.setProperty('--scroll-duration', `${speed}s`);
-                scrollSpeedValue.innerText = speed;
+            // 화면 꽉 채우기 (Auto Fit) 토글
+            autoFitCheck.addEventListener('change', e => {
+                if (e.target.checked) {
+                    fontSizeSlider.disabled = true; // 슬라이더 비활성화
+                    fontSizeSlider.classList.add('opacity-50', 'cursor-not-allowed');
+                    adjustFontSizeToFit();
+                } else {
+                    fontSizeSlider.disabled = false; // 슬라이더 활성화
+                    fontSizeSlider.classList.remove('opacity-50', 'cursor-not-allowed');
+                    // 원래 슬라이더 값으로 복귀
+                    scrollingTextElement.style.fontSize = `${fontSizeSlider.value}px`;
+                }
             });
 
+            // 텍스트 고정 (Static Mode) 토글
+            staticModeCheck.addEventListener('change', e => {
+                if (e.target.checked) {
+                    scrollingTextElement.classList.add('static-mode');
+                    previewDiv.classList.add('static-layout');
+                    scrollSpeedSlider.disabled = true;
+                    scrollSpeedSlider.classList.add('opacity-50', 'cursor-not-allowed');
+                } else {
+                    scrollingTextElement.classList.remove('static-mode');
+                    previewDiv.classList.remove('static-layout');
+                    scrollSpeedSlider.disabled = false;
+                    scrollSpeedSlider.classList.remove('opacity-50', 'cursor-not-allowed');
+                }
+                // 모드 변경 시 크기 재계산 (맞춤 옵션이 켜져있을 경우 기준이 달라지므로)
+                if (autoFitCheck.checked) adjustFontSizeToFit();
+            });
+
+            // 스크롤 속도
+            scrollSpeedSlider.addEventListener('input', e => {
+                root.style.setProperty('--scroll-duration', `${e.target.value}s`);
+                scrollSpeedValue.innerText = e.target.value;
+            });
+
+            // 깜빡임 속도
             blinkSpeedSlider.addEventListener('input', e => {
                 const speed = e.target.value;
                 if (speed > 0) {
@@ -267,41 +394,60 @@
                 blinkSpeedValue.innerText = parseFloat(speed).toFixed(1);
             });
 
+            // 전체 화면
             playButton.addEventListener('click', () => {
-                if (previewWrapper.requestFullscreen) {
-                    previewWrapper.requestFullscreen();
-                } else if (previewWrapper.webkitRequestFullscreen) {
-                    previewWrapper.webkitRequestFullscreen();
-                } else if (previewWrapper.msRequestFullscreen) {
-                    previewWrapper.msRequestFullscreen();
+                if (previewWrapper.requestFullscreen) previewWrapper.requestFullscreen();
+                else if (previewWrapper.webkitRequestFullscreen) previewWrapper.webkitRequestFullscreen();
+                else if (previewWrapper.msRequestFullscreen) previewWrapper.msRequestFullscreen();
+            });
+
+            // 전체 화면 변경 감지 (크기가 변하므로 자동 맞춤 재실행)
+            document.addEventListener('fullscreenchange', () => {
+                // 전체 화면 전환 애니메이션이 끝난 후 약간의 딜레이를 두고 계산
+                setTimeout(() => {
+                    if (autoFitCheck.checked) adjustFontSizeToFit();
+                }, 100);
+            });
+            window.addEventListener('resize', () => {
+                if (autoFitCheck.checked) adjustFontSizeToFit();
+            });
+
+            // --- 언어 및 기타 ---
+            function translateUI(lang) {
+                document.querySelectorAll('[data-translate-key]').forEach(el => {
+                    const key = el.dataset.translateKey;
+                    if (translations[lang][key]) el.innerText = translations[lang][key];
+                });
+                const defaultKo = translations.ko.placeholder;
+                const defaultEn = translations.en.placeholder;
+                if (textInput.value === defaultKo || textInput.value === defaultEn) {
+                    textInput.value = translations[lang].placeholder;
+                    scrollingTextElement.innerText = translations[lang].placeholder;
                 }
-            });
+            }
 
-            languageToggle.addEventListener('change', (e) => {
-                translateUI(e.target.checked ? 'en' : 'ko');
-            });
-
-            // --- 언어 자동 감지 및 모달 로직 ---
+            languageToggle.addEventListener('change', e => translateUI(e.target.checked ? 'en' : 'ko'));
+            
+            // 초기 언어 설정
             const userLang = navigator.language || navigator.userLanguage;
             if (!userLang.startsWith('ko')) {
                 document.getElementById('language-modal-text').innerText = 'Switch to English?';
                 languageModal.classList.remove('hidden');
                 setTimeout(() => languageModal.classList.remove('opacity-0'), 10);
             }
-
-            function closeModal() {
-                languageModal.classList.add('opacity-0');
-                setTimeout(() => languageModal.classList.add('hidden'), 300);
-            }
-
             langConfirmYes.addEventListener('click', () => {
                 translateUI('en');
                 languageToggle.checked = true;
                 closeModal();
             });
+            function closeModal() {
+                languageModal.classList.add('opacity-0');
+                setTimeout(() => languageModal.classList.add('hidden'), 300);
+            }
             langConfirmNo.addEventListener('click', closeModal);
 
             function rgbToHex(rgb) {
+                if (!rgb) return "#000000";
                 let sep = rgb.includes(",") ? "," : " ";
                 rgb = rgb.substr(4).split(")")[0].split(sep);
                 let r = (+rgb[0]).toString(16).padStart(2, '0');
