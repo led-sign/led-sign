@@ -15,7 +15,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
-
+    
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-9DHM2Q6G3P"></script>
     <script>
@@ -25,18 +25,20 @@
 
     gtag('config', 'G-9DHM2Q6G3P');
     </script>
-    
-    
+        
     <style>
         body {
             font-family: 'Inter', sans-serif;
         }
         :root {
-            --scroll-duration: 10s;
+            /* 수정됨: 기본 속도(레벨 15)에 해당하는 시간 설정 (31 - 15 = 16s) */
+            --scroll-duration: 16s;
             --blink-duration: 1s;
+            --container-width: 100vw; /* 기본값 */
         }
         @keyframes marquee {
-            0% { transform: translateX(100%); }
+            /* 글자 너비(100%)가 아닌 화면 너비(var(--container-width))에서 시작 */
+            0% { transform: translateX(var(--container-width)); }
             100% { transform: translateX(-100%); }
         }
         @keyframes blink {
@@ -165,11 +167,11 @@
                     <input type="range" id="font-size-slider" min="10" max="300" value="60" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
                 </div>
 
-                <!-- 스크롤 속도 + 정지 모드 -->
+                <!-- 스크롤 속도 (단위 s 제거, 로직 반전) -->
                 <div class="lg:col-span-1">
                     <div class="flex justify-between items-center mb-2">
                         <label for="scroll-speed-slider" class="block text-sm font-medium text-gray-300">
-                            <span data-translate-key="scrollSpeedLabel">스크롤 속도:</span> <span id="scroll-speed-value">10</span>s
+                            <span data-translate-key="scrollSpeedLabel">스크롤 속도:</span> <span id="scroll-speed-value">15</span>
                         </label>
                         <!-- 텍스트 고정 체크박스 -->
                         <div class="flex items-center">
@@ -177,7 +179,8 @@
                             <label for="static-mode-check" class="ml-2 text-xs text-gray-300 cursor-pointer select-none" data-translate-key="staticModeLabel">텍스트 고정</label>
                         </div>
                     </div>
-                    <input type="range" id="scroll-speed-slider" min="1" max="30" value="10" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
+                    <!-- 수정됨: max 30, value 15 (중간 속도) -->
+                    <input type="range" id="scroll-speed-slider" min="1" max="30" value="15" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
                 </div>
 
                 <div class="lg:col-span-1">
@@ -265,9 +268,12 @@
 
             // --- 자동 크기 조절 함수 (핵심 로직) ---
             function adjustFontSizeToFit() {
+                // 추가: 화면 너비를 계산하여 CSS 변수 업데이트 (애니메이션 시작점 보정)
+                const containerWidth = previewWrapper.clientWidth;
+                root.style.setProperty('--container-width', `${containerWidth}px`);
+
                 if (!autoFitCheck.checked) return; // 체크 안 되어있으면 실행 안 함
 
-                const containerWidth = previewWrapper.clientWidth;
                 const containerHeight = previewWrapper.clientHeight;
                 const text = scrollingTextElement.innerText;
                 const isStatic = staticModeCheck.checked;
@@ -376,10 +382,13 @@
                 if (autoFitCheck.checked) adjustFontSizeToFit();
             });
 
-            // 스크롤 속도
+            // 스크롤 속도 (수정됨: 속도 = 31 - 시간 역산)
             scrollSpeedSlider.addEventListener('input', e => {
-                root.style.setProperty('--scroll-duration', `${e.target.value}s`);
-                scrollSpeedValue.innerText = e.target.value;
+                const speed = parseInt(e.target.value);
+                // 속도 1 -> 30초 (느림), 속도 30 -> 1초 (빠름)
+                const duration = 31 - speed;
+                root.style.setProperty('--scroll-duration', `${duration}s`);
+                scrollSpeedValue.innerText = speed; // 단위 없이 숫자만 표시
             });
 
             // 깜빡임 속도
@@ -405,12 +414,15 @@
             document.addEventListener('fullscreenchange', () => {
                 // 전체 화면 전환 애니메이션이 끝난 후 약간의 딜레이를 두고 계산
                 setTimeout(() => {
-                    if (autoFitCheck.checked) adjustFontSizeToFit();
+                    adjustFontSizeToFit(); // 화면 크기가 변했으므로 무조건 실행하여 시작점 재계산
                 }, 100);
             });
             window.addEventListener('resize', () => {
-                if (autoFitCheck.checked) adjustFontSizeToFit();
+                adjustFontSizeToFit(); // 화면 크기가 변했으므로 무조건 실행하여 시작점 재계산
             });
+
+            // 초기 로딩 시 시작점 계산
+            adjustFontSizeToFit();
 
             // --- 언어 및 기타 ---
             function translateUI(lang) {
