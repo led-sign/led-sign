@@ -161,24 +161,20 @@
     <div id="toast">Link Copied to Clipboard!</div>
 
     <div class="w-full max-w-4xl mx-auto">
-        <!-- === 미리보기 영역 === -->
         <div id="preview-wrapper" class="bg-black border-4 border-gray-700 rounded-lg overflow-hidden mb-8 shadow-lg h-64 relative">
             <div id="preview">
-                <!-- 기본 텍스트를 영어로 변경 -->
-                <p id="scrolling-text-element" class="text-6xl font-bold scrolling-text whitespace-nowrap" style="color: rgb(255, 221, 0);">Enter your text here</p>
+                <!-- whitespace-nowrap 대신 style에서 white-space: pre 처리 -->
+                <p id="scrolling-text-element" class="text-6xl font-bold scrolling-text" style="color: rgb(255, 221, 0);">Enter your text here</p>
             </div>
         </div>
 
-        <!-- === 컨트롤 패널 === -->
         <div id="control-panel" class="bg-gray-800 p-6 rounded-lg shadow-2xl">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                
                 <div class="lg:col-span-3">
-                    <!-- 라벨 및 기본값을 영어로 변경 -->
                     <label for="text-input" class="block text-sm font-medium text-gray-300 mb-2" data-translate-key="textLabel">Display Text</label>
-                    <input type="text" id="text-input" value="Enter your text here" class="w-full bg-gray-700 border-gray-600 rounded-md px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
+                    <!-- input 태그를 textarea로 변경하여 여러 줄 입력 지원 -->
+                    <textarea id="text-input" rows="2" class="w-full bg-gray-700 border-gray-600 rounded-md px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none transition resize-none">Enter your text here</textarea>
                 </div>
-
                 <div>
                     <label class="block text-sm font-medium text-gray-300 mb-2" data-translate-key="textColorLabel">Text Color</label>
                     <div class="flex items-center space-x-2" id="preset-colors">
@@ -189,7 +185,6 @@
                         <input type="color" id="text-color-picker" value="#ffdd00" class="w-8 h-8 bg-gray-700 rounded-full cursor-pointer border-2 border-gray-600">
                     </div>
                 </div>
-
                 <div>
                     <label class="block text-sm font-medium text-gray-300 mb-2" data-translate-key="bgColorLabel">Background Color</label>
                     <div class="flex items-center space-x-2">
@@ -198,7 +193,6 @@
                         <input type="color" id="bg-color-picker" value="#000000" class="w-8 h-8 bg-gray-700 rounded-full cursor-pointer border-2 border-gray-600">
                     </div>
                 </div>
-
                 <div class="lg:col-span-1">
                     <div class="flex justify-between items-center mb-2">
                         <label for="font-size-slider" class="block text-sm font-medium text-gray-300">
@@ -211,7 +205,6 @@
                     </div>
                     <input type="range" id="font-size-slider" min="10" max="300" value="60" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
                 </div>
-
                 <div class="lg:col-span-1">
                     <div class="flex justify-between items-center mb-2">
                         <label for="scroll-speed-slider" class="block text-sm font-medium text-gray-300">
@@ -224,8 +217,6 @@
                     </div>
                     <input type="range" id="scroll-speed-slider" min="1" max="30" value="15" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
                 </div>
-
-                <!-- 깜빡임 속도 -->
                 <div class="lg:col-span-1">
                     <label for="blink-speed-slider" class="block text-sm font-medium text-gray-300 mb-2">
                         <span data-translate-key="blinkSpeedLabel">Blink Speed:</span> <span id="blink-speed-value">0</span><span data-translate-key="blinkSuffix"> (0=off)</span>
@@ -238,20 +229,16 @@
                 <div class="flex items-center space-x-2 mb-4 md:mb-0">
                     <span class="text-sm font-medium">KO</span>
                     <label for="language-toggle" class="relative inline-flex items-center cursor-pointer">
-                        <!-- 기본적으로 체크된 상태(영어)로 시작 -->
                         <input type="checkbox" value="" id="language-toggle" class="sr-only peer" checked>
                         <div class="w-11 h-6 bg-gray-600 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
                     </label>
                     <span class="text-sm font-medium">EN</span>
                 </div>
-                
                 <div class="flex space-x-3 w-full md:w-auto">
-                    <!-- 공유 버튼 -->
                     <button id="share-button" class="flex-1 md:flex-none bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-6 rounded-lg text-lg transition-transform transform hover:scale-105 shadow-lg flex items-center justify-center space-x-2">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
                         <span data-translate-key="shareButton">Share</span>
                     </button>
-
                     <button id="play-button" class="flex-1 md:flex-none bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg text-lg transition-transform transform hover:scale-105 shadow-lg flex items-center justify-center space-x-2">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         <span data-translate-key="playButton">Play Fullscreen</span>
@@ -261,7 +248,7 @@
         </div>
     </div>
 
-    <!-- 하단 Footer (개발자 문의) 추가 -->
+    <!-- 하단 Footer (개발자 문의) -->
     <footer class="mt-12 text-gray-500 text-sm text-center pb-8">
         <p>© 2025 LED Web Scroller. All rights reserved.</p>
         <p class="mt-2">
@@ -331,7 +318,7 @@
                 }
             };
 
-            // --- 자동 크기 조절 함수 ---
+            // --- 자동 크기 조절 함수 (멀티라인 지원) ---
             function adjustFontSizeToFit() {
                 const containerWidth = previewWrapper.clientWidth;
                 root.style.setProperty('--container-width', `${containerWidth}px`);
@@ -339,9 +326,12 @@
                 if (!autoFitCheck.checked) return;
 
                 const containerHeight = previewWrapper.clientHeight;
-                const text = scrollingTextElement.innerText;
+                const text = scrollingTextElement.innerText; // 줄바꿈(\n) 포함된 텍스트
                 const isStatic = staticModeCheck.checked;
 
+                // 텍스트 라인 분리
+                const lines = text.split('\n');
+                
                 let minSize = 10;
                 let maxSize = 1000;
                 let optimalSize = 10;
@@ -355,14 +345,24 @@
                 while (low <= high) {
                     let mid = Math.floor((low + high) / 2);
                     context.font = `bold ${mid}px 'Inter', sans-serif`;
-                    const metrics = context.measureText(text);
-                    const textWidth = metrics.width;
-                    const textHeight = mid;
+                    
+                    // 가장 긴 줄의 너비 계산
+                    let maxLineWidth = 0;
+                    lines.forEach(line => {
+                        const lineWidth = context.measureText(line).width;
+                        if (lineWidth > maxLineWidth) maxLineWidth = lineWidth;
+                    });
+                    const textWidth = maxLineWidth;
+                    
+                    // 전체 텍스트 높이 계산 (줄 수 * 폰트크기 * 줄간격 1.2)
+                    const lineHeightRatio = 1.2;
+                    const textHeight = mid * lines.length * lineHeightRatio;
 
                     let fits = false;
                     if (isStatic) {
                         fits = (textWidth <= containerWidth * 0.95) && (textHeight <= containerHeight * 0.95);
                     } else {
+                        // 스크롤 모드여도 세로 높이는 화면을 넘어가면 안됨
                         fits = (textHeight <= containerHeight * 0.95);
                     }
 
