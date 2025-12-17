@@ -3,7 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
+
+    <!-- ▼▼▼ Canonical Tag (표준 주소 설정) ▼▼▼ -->
+    <!-- 공유 링크로 인해 주소가 지저분해져도 검색 점수를 메인 페이지로 집중시킵니다. -->
+    <link rel="canonical" href="https://led-sign.github.io/led-sign/" />
+
+    <!-- ▼▼▼ Robots Meta Tag ▼▼▼ -->
+    <meta name="robots" content="index, follow">
+
     <!-- ▼▼▼ SEO 및 메타 태그 (글로벌 최적화 적용) ▼▼▼ -->
     <title>Online LED Scroller | Web LED Banner - Free Digital Signboard</title>
     
@@ -25,6 +32,25 @@
     <meta property="og:type" content="website">
     <meta property="og:title" content="Online LED Scroller | Web LED Banner">
     <meta property="og:description" content="Create your own LED banner instantly. No app installation needed.">
+
+    <!-- ▼▼▼ 4. JSON-LD (구조화된 데이터) - Google에게 앱 정보 제공 ▼▼▼ -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Online LED Scroller",
+      "url": "https://led-sign.github.io/led-sign/",
+      "description": "A free online LED scroller tool that turns your device into a digital signboard. No installation required.",
+      "applicationCategory": "UtilityApplication",
+      "operatingSystem": "Any",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "featureList": "Customizable text, Adjustable speed, Blink effect, Full screen mode, Share settings via link"
+    }
+    </script>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
