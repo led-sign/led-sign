@@ -1,21 +1,30 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <!-- SEO 및 메타 태그 (마일스톤 5 적용) -->
-    <title>온라인 LED 전광판 만들기 | Web Scroller</title>
-    <!-- 파비콘 설정: 이발소 회전 간판 이모지(💈)를 탭 아이콘으로 사용 -->
+    <!-- ▼▼▼ SEO 및 메타 태그 (글로벌 최적화 적용) ▼▼▼ -->
+    <title>Online LED Scroller | Web LED Banner - Free Digital Signboard</title>
+    
+    <!-- 파비콘 -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💈</text></svg>">
     
-    <meta name="description" content="텍스트, 색상, 속도를 마음대로 조절하는 나만의 온라인 LED 전광판을 만들어보세요. 전체 화면 기능으로 실제 전광판처럼 즐길 수 있습니다.">
-    <meta name="keywords" content="LED 전광판, 온라인 전광판, 웹 전광판, 텍스트 스크롤러, digital signboard, led scroller">
+    <meta name="description" content="Turn your phone into a digital LED signboard instantly. Customizable text, color, and speed. No app download required. 스마트폰을 LED 전광판처럼! 앱 설치 없이 텍스트, 색상, 속도를 조절하고 전체 화면으로 즐겨보세요.">
+    
+    <!-- 키워드: 한국어, 영어 + 중국어, 힌두어, 일본어, 스페인어 등 다국어 추가 -->
+    <meta name="keywords" content="LED Scroller, LED Banner, digital signboard, text scroller online, Scrolling text Generator online, Led text generator free, LED text Display app, LED banner website, online led text, LED Text Maker, Online LED Scrolling text,
+    LED 전광판, 온라인 전광판, 웹 전광판, 텍스트 스크롤러, 핸드폰 전광판, 전광판 어플 없이, 아이돌 응원, 콘서트 전광판, 야구장 응원, 공항 픽업 피켓,
+    LED显示屏, 手机弹幕, 滚动字幕, LED跑馬燈, 手機字幕,
+    एलईडी स्क्रोलर, डिजिटल बैनर, एलईडी टेक्स्ट,
+    LED電光掲示板, LEDバナー,
+    Letrero LED digital, Banner LED, Texto desplazable,
+    K-pop concert banner, Airport pickup sign, Concert cheering tool, scrolling text message, digital banner for party">
 
     <!-- Open Graph 태그 -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="온라인 LED 전광판 만들기 | Web Scroller">
-    <meta property="og:description" content="스마트폰을 LED 전광판처럼! 텍스트, 색상, 속도를 내 맘대로 조절하고 전체 화면으로 즐겨보세요.">
+    <meta property="og:title" content="Online LED Scroller | Web LED Banner">
+    <meta property="og:description" content="Create your own LED banner instantly. No app installation needed.">
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -23,7 +32,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
-   
+    
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-9DHM2Q6G3P"></script>
     <script>
@@ -94,10 +103,6 @@
             height: 100%;
         }
 
-        #language-modal {
-            transition: opacity 0.3s ease;
-        }
-
         /* 토스트 메시지 (복사 완료 알림) 스타일 */
         #toast {
             visibility: hidden;
@@ -125,17 +130,6 @@
 </head>
 <body class="bg-gray-900 text-white min-h-screen flex flex-col items-center justify-center p-4">
 
-    <!-- 언어 변경 모달 -->
-    <div id="language-modal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 hidden opacity-0">
-        <div class="bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-sm text-center">
-            <p id="language-modal-text" class="mb-4">Switch to English?</p>
-            <div class="flex justify-center space-x-4">
-                <button id="lang-confirm-yes" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition">Yes</button>
-                <button id="lang-confirm-no" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-6 rounded-lg transition">No</button>
-            </div>
-        </div>
-    </div>
-
     <!-- 토스트 메시지 -->
     <div id="toast">Link Copied to Clipboard!</div>
 
@@ -143,7 +137,8 @@
         <!-- === 미리보기 영역 === -->
         <div id="preview-wrapper" class="bg-black border-4 border-gray-700 rounded-lg overflow-hidden mb-8 shadow-lg h-64 relative">
             <div id="preview">
-                <p id="scrolling-text-element" class="text-6xl font-bold scrolling-text whitespace-nowrap" style="color: rgb(255, 221, 0);">여기에 텍스트를 입력하세요</p>
+                <!-- 기본 텍스트를 영어로 변경 -->
+                <p id="scrolling-text-element" class="text-6xl font-bold scrolling-text whitespace-nowrap" style="color: rgb(255, 221, 0);">Enter your text here</p>
             </div>
         </div>
 
@@ -152,12 +147,13 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 
                 <div class="lg:col-span-3">
-                    <label for="text-input" class="block text-sm font-medium text-gray-300 mb-2" data-translate-key="textLabel">표시할 텍스트</label>
-                    <input type="text" id="text-input" value="여기에 텍스트를 입력하세요" class="w-full bg-gray-700 border-gray-600 rounded-md px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
+                    <!-- 라벨 및 기본값을 영어로 변경 -->
+                    <label for="text-input" class="block text-sm font-medium text-gray-300 mb-2" data-translate-key="textLabel">Display Text</label>
+                    <input type="text" id="text-input" value="Enter your text here" class="w-full bg-gray-700 border-gray-600 rounded-md px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-300 mb-2" data-translate-key="textColorLabel">글자 색상</label>
+                    <label class="block text-sm font-medium text-gray-300 mb-2" data-translate-key="textColorLabel">Text Color</label>
                     <div class="flex items-center space-x-2" id="preset-colors">
                         <button data-color="rgb(239, 68, 68)" class="w-8 h-8 rounded-full bg-red-500 border-2 border-transparent hover:border-white transition"></button>
                         <button data-color="rgb(250, 204, 21)" class="w-8 h-8 rounded-full bg-yellow-400 border-2 border-transparent hover:border-white transition"></button>
@@ -168,7 +164,7 @@
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-300 mb-2" data-translate-key="bgColorLabel">배경 색상</label>
+                    <label class="block text-sm font-medium text-gray-300 mb-2" data-translate-key="bgColorLabel">Background Color</label>
                     <div class="flex items-center space-x-2">
                         <button data-bg-color="#000000" class="w-8 h-8 rounded-full bg-black border-2 border-gray-500 hover:border-white transition"></button>
                         <button data-bg-color="#FFFFFF" class="w-8 h-8 rounded-full bg-white border-2 border-gray-500 hover:border-black transition"></button>
@@ -179,11 +175,11 @@
                 <div class="lg:col-span-1">
                     <div class="flex justify-between items-center mb-2">
                         <label for="font-size-slider" class="block text-sm font-medium text-gray-300">
-                            <span data-translate-key="fontSizeLabel">글자 크기:</span> <span id="font-size-value">60</span>px
+                            <span data-translate-key="fontSizeLabel">Font Size:</span> <span id="font-size-value">60</span>px
                         </label>
                         <div class="flex items-center">
                             <input type="checkbox" id="auto-fit-check" class="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-500">
-                            <label for="auto-fit-check" class="ml-2 text-xs text-gray-300 cursor-pointer select-none" data-translate-key="autoFitLabel">화면 꽉 채우기</label>
+                            <label for="auto-fit-check" class="ml-2 text-xs text-gray-300 cursor-pointer select-none" data-translate-key="autoFitLabel">Fit to Screen</label>
                         </div>
                     </div>
                     <input type="range" id="font-size-slider" min="10" max="300" value="60" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
@@ -192,21 +188,22 @@
                 <div class="lg:col-span-1">
                     <div class="flex justify-between items-center mb-2">
                         <label for="scroll-speed-slider" class="block text-sm font-medium text-gray-300">
-                            <span data-translate-key="scrollSpeedLabel">스크롤 속도:</span> <span id="scroll-speed-value">15</span>
+                            <span data-translate-key="scrollSpeedLabel">Scroll Speed:</span> <span id="scroll-speed-value">15</span>
                         </label>
                         <div class="flex items-center">
                             <input type="checkbox" id="static-mode-check" class="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-500">
-                            <label for="static-mode-check" class="ml-2 text-xs text-gray-300 cursor-pointer select-none" data-translate-key="staticModeLabel">텍스트 고정</label>
+                            <label for="static-mode-check" class="ml-2 text-xs text-gray-300 cursor-pointer select-none" data-translate-key="staticModeLabel">Static Text</label>
                         </div>
                     </div>
                     <input type="range" id="scroll-speed-slider" min="1" max="30" value="15" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
                 </div>
 
+                <!-- 깜빡임 속도 -->
                 <div class="lg:col-span-1">
                     <label for="blink-speed-slider" class="block text-sm font-medium text-gray-300 mb-2">
-                        <span data-translate-key="blinkSpeedLabel">깜빡임 속도:</span> <span id="blink-speed-value">0.0</span><span data-translate-key="blinkSuffix">s (0=없음)</span>
+                        <span data-translate-key="blinkSpeedLabel">Blink Speed:</span> <span id="blink-speed-value">0</span><span data-translate-key="blinkSuffix"> (0=off)</span>
                     </label>
-                    <input type="range" id="blink-speed-slider" min="0" max="5" step="0.1" value="0" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
+                    <input type="range" id="blink-speed-slider" min="0" max="20" step="1" value="0" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
                 </div>
             </div>
 
@@ -214,27 +211,37 @@
                 <div class="flex items-center space-x-2 mb-4 md:mb-0">
                     <span class="text-sm font-medium">KO</span>
                     <label for="language-toggle" class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" value="" id="language-toggle" class="sr-only peer">
+                        <!-- 기본적으로 체크된 상태(영어)로 시작 -->
+                        <input type="checkbox" value="" id="language-toggle" class="sr-only peer" checked>
                         <div class="w-11 h-6 bg-gray-600 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
                     </label>
                     <span class="text-sm font-medium">EN</span>
                 </div>
                 
                 <div class="flex space-x-3 w-full md:w-auto">
-                    <!-- 공유 버튼 추가 -->
+                    <!-- 공유 버튼 -->
                     <button id="share-button" class="flex-1 md:flex-none bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-6 rounded-lg text-lg transition-transform transform hover:scale-105 shadow-lg flex items-center justify-center space-x-2">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
-                        <span data-translate-key="shareButton">공유</span>
+                        <span data-translate-key="shareButton">Share</span>
                     </button>
 
                     <button id="play-button" class="flex-1 md:flex-none bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg text-lg transition-transform transform hover:scale-105 shadow-lg flex items-center justify-center space-x-2">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        <span data-translate-key="playButton">전체 화면으로 재생</span>
+                        <span data-translate-key="playButton">Play Fullscreen</span>
                     </button>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- 하단 Footer (개발자 문의) 추가 -->
+    <footer class="mt-12 text-gray-500 text-sm text-center pb-8">
+        <p>© 2025 LED Web Scroller. All rights reserved.</p>
+        <p class="mt-2">
+            Have feedback? 
+            <a href="mailto:gmldn00@gmail.com" class="text-blue-500 hover:underline">Contact Developer</a>
+        </p>
+    </footer>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -261,9 +268,6 @@
             const toast = document.getElementById('toast');
             
             const languageToggle = document.getElementById('language-toggle');
-            const languageModal = document.getElementById('language-modal');
-            const langConfirmYes = document.getElementById('lang-confirm-yes');
-            const langConfirmNo = document.getElementById('lang-confirm-no');
             const root = document.documentElement;
 
             // --- 번역 데이터 ---
@@ -276,7 +280,7 @@
                     scrollSpeedLabel: '스크롤 속도:',
                     blinkSpeedLabel: '깜빡임 속도:',
                     playButton: '전체 화면으로 재생',
-                    blinkSuffix: 's (0=없음)',
+                    blinkSuffix: ' (0=없음)',
                     placeholder: '여기에 텍스트를 입력하세요',
                     staticModeLabel: '텍스트 고정',
                     autoFitLabel: '화면 꽉 채우기',
@@ -291,7 +295,7 @@
                     scrollSpeedLabel: 'Scroll Speed:',
                     blinkSpeedLabel: 'Blink Speed:',
                     playButton: 'Play Fullscreen',
-                    blinkSuffix: 's (0=off)',
+                    blinkSuffix: ' (0=off)',
                     placeholder: 'Enter your text here',
                     staticModeLabel: 'Static Text',
                     autoFitLabel: 'Fit to Screen',
@@ -406,15 +410,17 @@
                 scrollSpeedValue.innerText = speed;
             });
 
+            // 깜빡임 속도 (0~20 레벨)
             blinkSpeedSlider.addEventListener('input', e => {
-                const speed = e.target.value;
+                const speed = parseInt(e.target.value);
                 if (speed > 0) {
                     scrollingTextElement.classList.add('blinking-text');
-                    root.style.setProperty('--blink-duration', `${speed}s`);
+                    const duration = (21 - speed) * 0.1;
+                    root.style.setProperty('--blink-duration', `${duration}s`);
                 } else {
                     scrollingTextElement.classList.remove('blinking-text');
                 }
-                blinkSpeedValue.innerText = parseFloat(speed).toFixed(1);
+                blinkSpeedValue.innerText = speed;
             });
 
             playButton.addEventListener('click', () => {
@@ -425,7 +431,6 @@
 
             // === 공유 기능 구현 ===
             shareButton.addEventListener('click', () => {
-                // 현재 설정값들을 URL 파라미터로 생성
                 const params = new URLSearchParams();
                 params.set('text', textInput.value);
                 params.set('color', textColorPicker.value);
@@ -436,12 +441,9 @@
                 params.set('static', staticModeCheck.checked);
                 params.set('autofit', autoFitCheck.checked);
 
-                // 현재 주소 + 파라미터
                 const shareUrl = `${window.location.origin}${window.location.pathname}?${params.toString()}`;
 
-                // 클립보드에 복사
                 navigator.clipboard.writeText(shareUrl).then(() => {
-                    // 토스트 메시지 표시
                     const lang = languageToggle.checked ? 'en' : 'ko';
                     toast.innerText = translations[lang].toastMessage;
                     toast.className = 'show';
@@ -480,24 +482,23 @@
                     scrollSpeedValue.innerText = speed;
                 }
                 if (params.has('blink')) {
-                    const blink = params.get('blink');
-                    blinkSpeedSlider.value = blink;
-                    blinkSpeedValue.innerText = parseFloat(blink).toFixed(1);
-                    if (blink > 0) {
+                    const speed = parseInt(params.get('blink'));
+                    blinkSpeedSlider.value = speed;
+                    blinkSpeedValue.innerText = speed;
+                    if (speed > 0) {
                         scrollingTextElement.classList.add('blinking-text');
-                        root.style.setProperty('--blink-duration', `${blink}s`);
+                        const duration = (21 - speed) * 0.1;
+                        root.style.setProperty('--blink-duration', `${duration}s`);
                     }
                 }
                 if (params.has('static')) {
                     const isStatic = params.get('static') === 'true';
                     staticModeCheck.checked = isStatic;
-                    // change 이벤트 수동 트리거
                     staticModeCheck.dispatchEvent(new Event('change')); 
                 }
                 if (params.has('autofit')) {
                     const isAutoFit = params.get('autofit') === 'true';
                     autoFitCheck.checked = isAutoFit;
-                    // change 이벤트 수동 트리거
                     autoFitCheck.dispatchEvent(new Event('change')); 
                 }
             }
@@ -507,8 +508,7 @@
             });
             window.addEventListener('resize', () => { adjustFontSizeToFit(); });
 
-            loadSettingsFromUrl(); // 페이지 로드 시 URL 설정 적용
-            // Autofit이 켜져있지 않다면 초기 로드 시 한 번 실행
+            loadSettingsFromUrl(); 
             if(!autoFitCheck.checked) adjustFontSizeToFit();
 
             function translateUI(lang) {
@@ -516,8 +516,6 @@
                     const key = el.dataset.translateKey;
                     if (translations[lang][key]) el.innerText = translations[lang][key];
                 });
-                // Placeholder 번역은 값 비교 없이 항상 적용하지 않고, 
-                // 사용자가 입력한 값이 기본값과 같을 때만 적용하는 기존 로직 유지
                 const defaultKo = translations.ko.placeholder;
                 const defaultEn = translations.en.placeholder;
                 if (textInput.value === defaultKo || textInput.value === defaultEn) {
@@ -528,22 +526,8 @@
 
             languageToggle.addEventListener('change', e => translateUI(e.target.checked ? 'en' : 'ko'));
             
-            const userLang = navigator.language || navigator.userLanguage;
-            if (!userLang.startsWith('ko')) {
-                document.getElementById('language-modal-text').innerText = 'Switch to English?';
-                languageModal.classList.remove('hidden');
-                setTimeout(() => languageModal.classList.remove('opacity-0'), 10);
-            }
-            langConfirmYes.addEventListener('click', () => {
-                translateUI('en');
-                languageToggle.checked = true;
-                closeModal();
-            });
-            function closeModal() {
-                languageModal.classList.add('opacity-0');
-                setTimeout(() => languageModal.classList.add('hidden'), 300);
-            }
-            langConfirmNo.addEventListener('click', closeModal);
+            // 팝업 없이 기본값 유지
+            // (userLang 감지 및 모달 표시 코드 삭제됨)
 
             function rgbToHex(rgb) {
                 if (!rgb) return "#000000";
